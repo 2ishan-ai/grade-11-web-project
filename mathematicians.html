@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematicians</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ── RESET & BASE ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink:      #1a1612;
+            --parchment:#f5f0e8;
+            --cream:    #faf7f2;
+            --gold:     #b8860b;
+            --gold-lt:  #d4a017;
+            --rust:     #8b3a2a;
+            --rule:     #c8bfaa;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        /* ── NAVBAR (matches existing) ── */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            height: 45px;
+            top: 0;
+            background: black;
+            z-index: 1000;
+        }
+        .nav-container { text-align: center; line-height: 45px; }
+        .navbar a {
+            color: white;
+            margin: 0 12px;
+            text-decoration: none;
+            position: relative;
+            font-size: 15px;
+            font-family: Arial, sans-serif;
+        }
+        .navbar a::after {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            background: white;
+            left: 0;
+            bottom: -4px;
+            transition: 0.3s;
+        }
+        .navbar a:hover::after { width: 100%; }
+
+        /* ── PAGE WRAPPER ── */
+        .page-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 32px 80px;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            text-align: center;
+            padding: 48px 0 56px;
+            border-bottom: 1px solid var(--rule);
+            margin-bottom: 64px;
+        }
+        .page-header .overline {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+        .page-header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.15;
+        }
+        .page-header .subtitle {
+            margin-top: 14px;
+            font-size: 1.05rem;
+            color: #6b6055;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── MATHEMATICIAN CARD ── */
+        .mathematician {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 0;
+            margin-bottom: 64px;
+            background: var(--parchment);
+            border: 1px solid var(--rule);
+            position: relative;
+            transition: box-shadow 0.25s;
+        }
+        .mathematician:hover {
+            box-shadow: 6px 6px 0 var(--gold);
+        }
+
+        /* alternating layout */
+        .mathematician.flip {
+            grid-template-columns: 1fr 220px;
+        }
+        .mathematician.flip .portrait-col { order: 2; }
+        .mathematician.flip .info-col     { order: 1; }
+
+        /* ── PORTRAIT COLUMN ── */
+        .portrait-col {
+            background: #e8e0d0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 32px 20px 24px;
+            border-right: 1px solid var(--rule);
+            min-height: 260px;
+        }
+        .mathematician.flip .portrait-col {
+            border-right: none;
+            border-left: 1px solid var(--rule);
+        }
+
+        .photo-placeholder {
+            width: 140px;
+            height: 170px;
+            background: #d5cbbf;
+            border: 2px dashed #b0a898;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #8a7f72;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            letter-spacing: 0.04em;
+        }
+        .photo-placeholder svg {
+            width: 36px; height: 36px;
+            opacity: 0.45;
+        }
+
+        .portrait-name {
+            margin-top: 16px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.78rem;
+            font-style: italic;
+            color: #7a6e62;
+            text-align: center;
+        }
+        .portrait-years {
+            font-family: Arial, sans-serif;
+            font-size: 0.7rem;
+            color: #9a8e82;
+            letter-spacing: 0.06em;
+            margin-top: 2px;
+        }
+
+        /* ── INFO COLUMN ── */
+        .info-col {
+            padding: 32px 36px 28px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: Arial, sans-serif;
+            font-size: 9.5px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            background: var(--ink);
+            color: var(--parchment);
+            padding: 3px 9px;
+            margin-bottom: 14px;
+        }
+        .badge.female { background: var(--rust); }
+
+        .info-col h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+        .info-col .field-tag {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .quote-block {
+            border-left: 3px solid var(--gold);
+            padding: 8px 0 8px 16px;
+            margin: 16px 0 20px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: #4a3f35;
+            line-height: 1.5;
+        }
+
+        .info-col p {
+            font-size: 0.95rem;
+            color: #3d342c;
+            margin-bottom: 14px;
+        }
+
+        .contributions {
+            margin-top: 16px;
+        }
+        .contributions h3 {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .contributions ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .contributions ul li {
+            background: white;
+            border: 1px solid var(--rule);
+            font-family: Arial, sans-serif;
+            font-size: 11.5px;
+            padding: 3px 10px;
+            color: var(--ink);
+        }
+
+        /* ── NUMBER BADGE ── */
+        .num {
+            position: absolute;
+            top: -18px;
+            left: 32px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--rule);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+        .mathematician.flip .num { left: auto; right: 32px; }
+
+        /* ── SECTION DIVIDER ── */
+        .divider {
+            text-align: center;
+            margin: 16px 0 64px;
+            color: var(--rule);
+            font-size: 1.1rem;
+            letter-spacing: 0.4em;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 32px 0 48px;
+            border-top: 1px solid var(--rule);
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: #9a8e82;
+            text-transform: uppercase;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 680px) {
+            .mathematician,
+            .mathematician.flip {
+                grid-template-columns: 1fr;
+            }
+            .mathematician.flip .portrait-col { order: 0; }
+            .mathematician.flip .info-col     { order: 1; }
+            .portrait-col,
+            .mathematician.flip .portrait-col {
+                border-right: none;
+                border-left: none;
+                border-bottom: 1px solid var(--rule);
+                flex-direction: row;
+                gap: 20px;
+                padding: 20px 24px;
+                min-height: auto;
+            }
+            .info-col { padding: 20px 24px; }
+            .num { top: -14px; font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-container">
+<a href="index.html">Home</a>
+        <a href="branches.html">Branches</a>
+        <a href="mathematicians.html">Mathematicians</a>
+        <a href="contact.html">Contact</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+        <p class="overline">Through the Ages</p>
+        <h1>Great Mathematicians</h1>
+        <p class="subtitle">The minds who shaped the language of the universe — from ancient geometry to modern computation.</p>
+    </header>
+
+    <!-- ── 1. EUCLID ── -->
+    <article class="mathematician">
+        <span class="num">01</span>
+        <div class="portrait-col">
+            <img src="euclid.webp" alt="Euclid" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Euclid of Alexandria</p>
+            <p class="portrait-years">c. 300 BCE</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">Ancient Greece</span>
+            <h2>Euclid</h2>
+            <p class="field-tag">Geometry · Number Theory · Logic</p>
+            <div class="quote-block">"There is no royal road to geometry."</div>
+            <p>Known as the "Father of Geometry," Euclid compiled and systematized the mathematical knowledge of his era in his monumental work <em>Elements</em> — one of the most influential textbooks ever written, used in classrooms for over two millennia.</p>
+            <p>His axiomatic approach to mathematics — building complex truths from a small set of self-evident postulates — established the foundation of rigorous mathematical proof that all subsequent mathematics rests upon.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Euclidean Geometry</li>
+                    <li>The Elements (13 books)</li>
+                    <li>Proof of infinite primes</li>
+                    <li>Axiomatic method</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 2. ARCHIMEDES ── -->
+    <article class="mathematician flip">
+        <span class="num">02</span>
+        <div class="portrait-col">
+            <img src="Archimedes.jpg" alt="Archimedes" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Archimedes of Syracuse</p>
+            <p class="portrait-years">c. 287 – 212 BCE</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">Ancient Greece</span>
+            <h2>Archimedes</h2>
+            <p class="field-tag">Calculus Precursor · Physics · Geometry</p>
+            <div class="quote-block">"Give me a lever long enough and a fulcrum on which to place it, and I shall move the world."</div>
+            <p>Widely regarded as the greatest mathematician of antiquity, Archimedes pioneered methods for calculating areas and volumes that prefigured integral calculus by nearly 2,000 years. His method of exhaustion was a precursor to the limit concept.</p>
+            <p>He determined an astonishingly accurate approximation of π, proved that the area of a circle equals πr², and derived the volume and surface area of a sphere — inscribing it elegantly inside a cylinder.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Approximation of π</li>
+                    <li>Method of Exhaustion</li>
+                    <li>Archimedes' Principle</li>
+                    <li>Law of the Lever</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 3. ISAAC NEWTON ── -->
+    <article class="mathematician">
+        <span class="num">03</span>
+        <div class="portrait-col">
+            <img src=" Isaac Newton.jpg" alt="Isaac Newton" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Sir Isaac Newton</p>
+            <p class="portrait-years">1643 – 1727</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">England</span>
+            <h2>Isaac Newton</h2>
+            <p class="field-tag">Calculus · Physics · Optics</p>
+            <div class="quote-block">"If I have seen further, it is by standing on the shoulders of giants."</div>
+            <p>Newton independently invented calculus (simultaneously with Leibniz), providing humanity with its most powerful mathematical tool for describing change and motion. His <em>Principia Mathematica</em> formulated the laws of motion and universal gravitation.</p>
+            <p>Working largely in isolation during the plague years of 1665–1666 — his so-called "miracle years" — Newton made breakthroughs in calculus, optics, and celestial mechanics that defined physics for the next two centuries.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Differential Calculus</li>
+                    <li>Laws of Motion</li>
+                    <li>Law of Gravitation</li>
+                    <li>Binomial Theorem</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 4. LEONHARD EULER ── -->
+    <article class="mathematician flip">
+        <span class="num">04</span>
+        <div class="portrait-col">
+           <img src="Leonhard Euler.jpg" alt="Leonhard Euler" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Leonhard Euler</p>
+            <p class="portrait-years">1707 – 1783</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">Switzerland</span>
+            <h2>Leonhard Euler</h2>
+            <p class="field-tag">Analysis · Graph Theory · Number Theory</p>
+            <div class="quote-block">"Mathematicians have tried in vain to this day to discover some order in the sequence of prime numbers, and we have reason to believe that it is a mystery into which the human mind will never penetrate."</div>
+            <p>The most prolific mathematician in history, Euler introduced much of the notation still used today — including <em>f(x)</em>, <em>e</em>, <em>i</em>, Σ, and π in its modern context. He continued producing landmark mathematics even after losing his sight completely.</p>
+            <p>His identity e<sup>iπ</sup> + 1 = 0 — connecting five fundamental constants — is often called the most beautiful equation in mathematics.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Euler's Identity</li>
+                    <li>Graph Theory (Königsberg)</li>
+                    <li>Euler's Formula</li>
+                    <li>Modern Math Notation</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 5. CARL FRIEDRICH GAUSS ── -->
+    <article class="mathematician">
+        <span class="num">05</span>
+        <div class="portrait-col">
+            <img src="Carl Friedrich Gauss.jpg" alt="Carl Friedrich Gauss" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Carl Friedrich Gauss</p>
+            <p class="portrait-years">1777 – 1855</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">Germany</span>
+            <h2>Carl Friedrich Gauss</h2>
+            <p class="field-tag">Number Theory · Statistics · Geometry</p>
+            <div class="quote-block">"Mathematics is the queen of the sciences, and number theory is the queen of mathematics."</div>
+            <p>Often called the "Prince of Mathematics," Gauss demonstrated extraordinary ability from childhood — reportedly summing the integers 1 to 100 almost instantly at age 10. His <em>Disquisitiones Arithmeticae</em> at age 21 transformed number theory into a rigorous discipline.</p>
+            <p>Gauss contributed to an astonishing range of fields: statistics (the Gaussian distribution), differential geometry, electromagnetism, and the construction of a 17-sided polygon using only compass and straightedge.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Gaussian Distribution</li>
+                    <li>Number Theory</li>
+                    <li>Non-Euclidean Geometry</li>
+                    <li>Least Squares Method</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 6. EMMY NOETHER (Woman) ── -->
+    <article class="mathematician flip">
+        <span class="num">06</span>
+        <div class="portrait-col">
+           <img src="Emmy Noether.jpg" alt="Amalie Emmy Noether" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Amalie Emmy Noether</p>
+            <p class="portrait-years">1882 – 1935</p>
+        </div>
+        <div class="info-col">
+            <span class="badge female">Germany · USA</span>
+            <h2>Emmy Noether</h2>
+            <p class="field-tag">Abstract Algebra · Theoretical Physics</p>
+            <div class="quote-block">"My methods are really methods of working and thinking; this is why they have crept in everywhere anonymously."</div>
+            <p>Called the most important woman in the history of mathematics by Albert Einstein, Emmy Noether revolutionized abstract algebra and made a profound contribution to theoretical physics. She overcame enormous institutional barriers — initially not permitted to lecture under her own name in Germany.</p>
+            <p>Noether's Theorem (1915) is a cornerstone of modern physics: it proves that every symmetry in nature corresponds to a conserved quantity — linking the symmetry of time to conservation of energy, and so on. It underpins quantum mechanics and general relativity alike.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Noether's Theorem</li>
+                    <li>Abstract Algebra</li>
+                    <li>Ring Theory</li>
+                    <li>Invariant Theory</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <!-- ── 7. SRINIVASA RAMANUJAN ── -->
+    <article class="mathematician">
+        <span class="num">07</span>
+        <div class="portrait-col">
+            <img src="Srinivasa Ramanujan.jpg" alt="Srinivasa Ramanujan" style="width:140px; height:170px; object-fit:cover;">
+            <p class="portrait-name">Srinivasa Ramanujan</p>
+            <p class="portrait-years">1887 – 1920</p>
+        </div>
+        <div class="info-col">
+            <span class="badge">India</span>
+            <h2>Srinivasa Ramanujan</h2>
+            <p class="field-tag">Number Theory · Infinite Series · Analysis</p>
+            <div class="quote-block">"An equation for me has no meaning unless it expresses a thought of God."</div>
+            <p>Almost entirely self-taught, Ramanujan emerged from poverty in Madras to become one of history's most extraordinary mathematical minds. He sent a letter packed with theorems to Cambridge mathematician G. H. Hardy in 1913 — Hardy declared some results "must be true because no one could have the imagination to invent them."</p>
+            <p>In a tragically brief life of 32 years, Ramanujan produced results in number theory, infinite series, and continued fractions that mathematicians are still proving and exploring today. His notebooks continue to inspire discoveries a century later.</p>
+            <div class="contributions">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Ramanujan Prime</li>
+                    <li>Ramanujan–Hardy number (1729)</li>
+                    <li>Mock Theta Functions</li>
+                    <li>Infinite Series for π</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <p>Mathematics — The Language of the Universe</p>
+    </footer>
+
+</div><!-- /page-wrapper -->
+</body>
+</html>

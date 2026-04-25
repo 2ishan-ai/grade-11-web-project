@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <style>
+        /* ── RESET ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            height: 45px;
+            top: 0;
+            background: black;
+            z-index: 1000;
+        }
+        .nav-container { text-align: center; line-height: 45px; }
+        .navbar a {
+            color: white;
+            margin: 0 12px;
+            text-decoration: none;
+            position: relative;
+            font-size: 15px;
+        }
+        .navbar a::after {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            background: white;
+            left: 0;
+            bottom: -4px;
+            transition: 0.3s;
+        }
+        .navbar a:hover::after { width: 100%; }
+
+        /* ── PAGE WRAPPER ── */
+        .page-wrapper {
+            padding-top: 80px;
+            padding-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .page-header p {
+            margin-top: 8px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        /* ── CARD ── */
+        .contact-card {
+            background: white;
+            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 520px;
+            padding: 40px 40px 36px;
+        }
+
+        /* ── FORM FIELDS ── */
+        .field {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #ccc;
+            border-radius: 0;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #1a1a1a;
+            background: #fafafa;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #1a1a1a;
+            background: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+
+        /* custom select arrow */
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: "▾";
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #555;
+            font-size: 14px;
+        }
+        select { padding-right: 36px; cursor: pointer; }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: black;
+            color: white;
+            border: none;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 4px;
+        }
+        .btn-submit:hover  { background: #333; }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 24px;
+            color: #aaa;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        /* ── CONTACT INFO ── */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            color: #444;
+        }
+        .info-row .icon {
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html">Home</a>
+        <a href="branches.html">Branches</a>
+        <a href="mathematicians.html">Mathematicians</a>
+        <a href="contact.html">Contact</a>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <h1>Contact Us</h1>
+        <p>Have a question or suggestion? We'd love to hear from you.</p>
+    </div>
+
+    <div class="contact-card">
+
+        <!--
+            ════════════════════════════════════════════════
+            FORMSPREE SETUP  (takes 2 minutes — free)
+            ────────────────────────────────────────────────
+            1. Go to  https://formspree.io
+            2. Sign up with your email
+            3. Click "New Form" → give it a name
+            4. Copy the form endpoint URL, e.g.:
+                  https://formspree.io/f/xAbCdEfG
+            5. Replace YOUR_FORM_ID below with that URL
+            ════════════════════════════════════════════════
+        -->
+        <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+
+            <!-- Name -->
+            <div class="field">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name"
+                       placeholder="e.g. Ishan Panta" required>
+            </div>
+
+            <!-- Email -->
+            <div class="field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       placeholder="you@example.com" required>
+            </div>
+
+            <!-- Subject -->
+            <div class="field">
+                <label for="subject">Subject</label>
+                <div class="select-wrap">
+                    <select id="subject" name="subject" required>
+                        <option value="" disabled selected>Select a topic…</option>
+                        <option>General Question</option>
+                        <option>Suggest a Mathematician</option>
+                        <option>Report an Error</option>
+                        <option>Feedback / Suggestion</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Message -->
+            <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message"
+                          placeholder="Write your message here…" required></textarea>
+            </div>
+
+            <!-- Hidden redirect after submission -->
+            <input type="hidden" name="_next" value="https://yourdomain.com/contact.html">
+
+            <button type="submit" class="btn-submit">Send Message →</button>
+
+        </form>
+
+        <div class="divider">OR REACH US DIRECTLY</div>
+
+        <div class="contact-info">
+            <div class="info-row">
+                <span class="icon">✉</span>
+                <span>matheons1@gmail.com</span>
+            </div>
+            <div class="info-row">
+                <span class="icon">📍</span>
+                <span>Matheons.in</span>
+            </div>
+        </div>
+  
+
+</div>
+</body>
+</html>

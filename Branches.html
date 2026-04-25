@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematics</title>
+  <style>
+
+/* ── RESET ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── BACKGROUND ─────────────────────────────── */
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(108,99,255,.13) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 10%, rgba(0,188,212,.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,167,38,.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 70%, rgba(76,175,80,.10) 0%, transparent 45%),
+    #f4f2ff;
+  background-attachment: fixed;
+}
+
+/* subtle floating shapes behind page */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 8% 35%, rgba(108,99,255,.07) 120px, transparent 121px),
+    radial-gradient(circle at 92% 55%, rgba(0,188,212,.07) 100px, transparent 101px),
+    radial-gradient(circle at 50% 90%, rgba(255,167,38,.06) 150px, transparent 151px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── NAVBAR (unchanged) ─────────────────────── */
+.navbar {
+  position: fixed;
+  width: 100%;
+  height: 45px;
+  top: 0;
+  background: black;
+  z-index: 1000;
+}
+.nav-container {
+  text-align: center;
+  line-height: 45px;
+}
+.navbar a {
+  color: white;
+  margin: 0 12px;
+  text-decoration: none;
+  position: relative;
+  font-size: 15px;
+}
+.navbar a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background: white;
+  left: 0;
+  bottom: -4px;
+  transition: 0.3s;
+}
+.navbar a:hover::after { width: 100%; }
+
+/* ── MAIN WRAPPER ───────────────────────────── */
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  padding-top: 65px;
+  padding-bottom: 60px;
+}
+
+/* ── DEFINITION SECTION (unchanged content) ─── */
+.math-box {
+  padding: 15px;
+  background-color: white;
+  width: 80%;
+  font-family: Arial;
+  margin: 20px auto 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(108,99,255,.08);
+}
+.math-box h2 { text-align: center; }
+.math-section { margin-top: 15px; }
+.math-good { color: green; }
+.math-bad  { color: red; }
+
+/* ── SECTION DIVIDER ────────────────────────── */
+.section-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 48px 0 6px;
+  color: #1a1a2e;
+  letter-spacing: .02em;
+}
+.section-sub {
+  text-align: center;
+  font-size: .88rem;
+  color: #666;
+  margin-bottom: 28px;
+}
+
+/* ── BRANCHES GRID ──────────────────────────── */
+.branches-wrap {
+  width: 88%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+/* ── BRANCH CARD ────────────────────────────── */
+.branch-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 24px rgba(0,0,0,.09);
+  display: flex;
+  flex-direction: column;
+}
+
+/* card accent bar */
+.branch-card.pure    { border-top: 5px solid #6c63ff; }
+.branch-card.applied { border-top: 5px solid #00bcd4; }
+.branch-card.discrete{ border-top: 5px solid #ff9800; }
+
+/* card header */
+.branch-header {
+  padding: 18px 20px 14px;
+}
+.branch-roman {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.pure    .branch-roman { color: #6c63ff; }
+.applied .branch-roman { color: #00acc1; }
+.discrete.branch-roman,
+.discrete .branch-roman { color: #e65100; }
+
+.branch-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+.branch-desc {
+  font-size: .78rem;
+  color: #777;
+  line-height: 1.4;
+}
+
+/* ── DETAILS / SUMMARY (accordion) ─────────── */
+.branch-body {
+  padding: 0 16px 16px;
+  flex: 1;
+}
+
+details { border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
+details[open] { background: #fafafa; }
+
+summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: .84rem;
+  font-weight: 600;
+  color: #2d2d44;
+  border-radius: 8px;
+  user-select: none;
+  transition: background .15s;
+}
+summary::-webkit-details-marker { display: none; }
+summary:hover { background: #f0eeff; }
+.applied summary:hover { background: #e0f7fa; }
+.discrete summary:hover { background: #fff3e0; }
+
+.sum-num {
+  font-size: .7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: white;
+  flex-shrink: 0;
+}
+.pure    .sum-num { background: #6c63ff; }
+.applied .sum-num { background: #00acc1; }
+.discrete .sum-num { background: #e65100; }
+
+.sum-arrow {
+  margin-left: auto;
+  font-size: .65rem;
+  color: #aaa;
+  transition: transform .2s;
+}
+details[open] > summary .sum-arrow { transform: rotate(90deg); }
+
+/* sub-fields list */
+.sub-list {
+  padding: 6px 12px 10px 14px;
+}
+.sub-item {
+  padding: 5px 0 5px 10px;
+  font-size: .8rem;
+  color: #444;
+  border-left: 2px solid #e0e0f0;
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+.applied .sub-item { border-left-color: #b2ebf2; }
+.discrete .sub-item { border-left-color: #ffe0b2; }
+
+.sub-name { font-weight: 600; color: #222; }
+.sub-desc { color: #888; font-size: .74rem; }
+
+/* topic pills inside sub-item */
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+}
+.topic-pill {
+  font-size: .68rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #f0eeff;
+  color: #534ab7;
+  border: 1px solid #d0c8ff;
+}
+.applied .topic-pill  { background:#e0f7fa; color:#006064; border-color:#80deea; }
+.discrete .topic-pill { background:#fff3e0; color:#bf360c; border-color:#ffcc80; }
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media(max-width:900px){
+  .branches-wrap { grid-template-columns: 1fr; width:92%; }
+  .math-box { width:92%; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR (unchanged) ─────────────────── -->
+<nav class="navbar">
+  <div class="nav-container">
+        <a href="index.html">Home</a>
+        <a href="branches.html">Branches</a>
+        <a href="mathematicians.html">Mathematicians</a>
+        <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- ── DEFINITION (unchanged content) ──── -->
+  <div class="math-box">
+    <br>
+    <h2>I. Definition of Mathematics</h2>
+    <h3>A. Individually necessary and jointly sufficient definition of mathematics:</h3>
+
+    <div class="math-section">
+      <b>Necessary Conditions:</b>
+      <ul>
+        <li>Abstract (independent of physical objects)</li>
+        <li>Rule-governed (follows explicit rules)</li>
+        <li>Deductive (results follow with necessity)</li>
+        <li>Symbolic (uses symbols)</li>
+        <li>Consistent (no contradictions)</li>
+      </ul>
+    </div>
+
+    <div class="math-section">
+      <b>Final Definition:</b>
+      <p>Mathematics is a formal system of abstract, symbolically represented structures
+         governed by explicit rules of deduction that produce necessarily true conclusions
+         under conditions of internal consistency.</p>
+    </div>
+
+    <div class="math-section">
+      <b>Examples that satisfy:</b>
+      <ul class="math-good">
+        <li>Algebra</li>
+        <li>Geometry</li>
+        <li>Number Theory</li>
+      </ul>
+    </div>
+
+    <div class="math-section">
+      <b>Examples that do NOT satisfy:</b>
+      <ul class="math-bad">
+        <li>Physics</li>
+        <li>Accounting</li>
+        <li>Empirical Statistics</li>
+      </ul>
+    </div>
+    <br><br>
+    <h3>B. Definition by Britannica Encyclopedia</h3>
+    <p>"Mathematics is the science of structure, order, and relation that deals with logical reasoning and quantitative calculation.</p>
+  </div>
+
+  <!-- ── BRANCHES SECTION ──────────────────── -->
+  <h2 class="section-title">II. Branches of Mathematics</h2>
+  <p class="section-sub">Based on the Mathematics Subject Classification (MSC 2020) — click any branch to expand</p>
+
+  <div class="branches-wrap">
+
+    <!-- ══ PURE MATHEMATICS ══════════════════ -->
+    <div class="branch-card pure">
+      <div class="branch-header">
+        <div class="branch-name">Pure Mathematics</div>
+        <div class="branch-desc">Mathematics studied for intrinsic reasons, independent of external application</div>
+      </div>
+      <div class="branch-body">
+
+        <details>
+          <summary><span class="sum-num">A</span> Foundations &amp; Logic <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Mathematical Logic</div>
+              <div class="sub-desc">Formal systems of reasoning</div>
+              <div class="topics">
+                <span class="topic-pill">Propositional Logic</span>
+                <span class="topic-pill">First-Order Logic</span>
+                <span class="topic-pill">Modal Logic</span>
+                <span class="topic-pill">Intuitionistic Logic</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Model Theory</div>
+              <div class="sub-desc">Structures satisfying formal theories</div>
+              <div class="topics">
+                <span class="topic-pill">Completeness Theorems</span>
+                <span class="topic-pill">Stability Theory</span>
+                <span class="topic-pill">O-minimality</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Proof Theory</div>
+              <div class="sub-desc">Structure and strength of formal proofs</div>
+              <div class="topics">
+                <span class="topic-pill">Sequent Calculus</span>
+                <span class="topic-pill">Ordinal Analysis</span>
+                <span class="topic-pill">Gödel's Incompleteness</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Set Theory</div>
+              <div class="sub-desc">Foundational framework of mathematics</div>
+              <div class="topics">
+                <span class="topic-pill">ZFC Axioms</span>
+                <span class="topic-pill">Forcing &amp; Independence</span>
+                <span class="topic-pill">Large Cardinals</span>
+                <span class="topic-pill">Descriptive Set Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Computability Theory</div>
+              <div class="sub-desc">What can in principle be computed</div>
+              <div class="topics">
+                <span class="topic-pill">Turing Machines</span>
+                <span class="topic-pill">Halting Problem</span>
+                <span class="topic-pill">Degrees of Unsolvability</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Category Theory</div>
+              <div class="sub-desc">Abstract structures and functors — "mathematics of mathematics"</div>
+              <div class="topics">
+                <span class="topic-pill">Functors</span>
+                <span class="topic-pill">Adjunctions</span>
+                <span class="topic-pill">Topos Theory</span>
+                <span class="topic-pill">∞-Categories</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">B</span> Algebra <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Group Theory</div>
+              <div class="sub-desc">Symmetry and structure with one operation</div>
+              <div class="topics">
+                <span class="topic-pill">Finite Groups</span>
+                <span class="topic-pill">Lie Groups</span>
+                <span class="topic-pill">Representation Theory</span>
+                <span class="topic-pill">Geometric Group Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Ring &amp; Module Theory</div>
+              <div class="sub-desc">Addition and multiplication interacting</div>
+              <div class="topics">
+                <span class="topic-pill">Commutative Algebra</span>
+                <span class="topic-pill">Homological Algebra</span>
+                <span class="topic-pill">Algebraic K-Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Field Theory &amp; Galois Theory</div>
+              <div class="sub-desc">Extensions, automorphisms, solvability</div>
+              <div class="topics">
+                <span class="topic-pill">Galois Groups</span>
+                <span class="topic-pill">Finite Fields</span>
+                <span class="topic-pill">Valuation Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Linear &amp; Multilinear Algebra</div>
+              <div class="sub-desc">Vectors, matrices, tensors</div>
+              <div class="topics">
+                <span class="topic-pill">Vector Spaces</span>
+                <span class="topic-pill">Spectral Theory</span>
+                <span class="topic-pill">Tensor Algebra</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Lie Algebras</div>
+              <div class="sub-desc">Infinitesimal symmetry</div>
+              <div class="topics">
+                <span class="topic-pill">Root Systems</span>
+                <span class="topic-pill">Dynkin Diagrams</span>
+                <span class="topic-pill">Kac-Moody Algebras</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">C</span> Analysis <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Real Analysis</div>
+              <div class="sub-desc">Rigorous foundation of calculus on ℝ</div>
+              <div class="topics">
+                <span class="topic-pill">Measure Theory</span>
+                <span class="topic-pill">Lebesgue Integration</span>
+                <span class="topic-pill">Real Functions</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Complex Analysis</div>
+              <div class="sub-desc">Analytic functions over ℂ</div>
+              <div class="topics">
+                <span class="topic-pill">Cauchy's Theorem</span>
+                <span class="topic-pill">Conformal Maps</span>
+                <span class="topic-pill">Several Complex Variables</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Functional Analysis</div>
+              <div class="sub-desc">Analysis in infinite-dimensional spaces</div>
+              <div class="topics">
+                <span class="topic-pill">Banach Spaces</span>
+                <span class="topic-pill">Hilbert Spaces</span>
+                <span class="topic-pill">Operator Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Harmonic Analysis</div>
+              <div class="sub-desc">Decomposing functions into oscillatory components</div>
+              <div class="topics">
+                <span class="topic-pill">Fourier Analysis</span>
+                <span class="topic-pill">Wavelets</span>
+                <span class="topic-pill">Singular Integrals</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Differential Equations</div>
+              <div class="sub-desc">ODEs, PDEs, and dynamical systems</div>
+              <div class="topics">
+                <span class="topic-pill">ODEs</span>
+                <span class="topic-pill">PDEs (Elliptic, Parabolic, Hyperbolic)</span>
+                <span class="topic-pill">Dynamical Systems</span>
+                <span class="topic-pill">Chaos Theory</span>
+                <span class="topic-pill">Ergodic Theory</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">D</span> Geometry &amp; Topology <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">General Topology</div>
+              <div class="sub-desc">Abstract notion of nearness and continuity</div>
+              <div class="topics">
+                <span class="topic-pill">Topological Spaces</span>
+                <span class="topic-pill">Compactness</span>
+                <span class="topic-pill">Metrization</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algebraic Topology</div>
+              <div class="sub-desc">Algebraic invariants of topological spaces</div>
+              <div class="topics">
+                <span class="topic-pill">Homotopy Theory</span>
+                <span class="topic-pill">Homology &amp; Cohomology</span>
+                <span class="topic-pill">Fiber Bundles</span>
+                <span class="topic-pill">K-Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Differential Geometry</div>
+              <div class="sub-desc">Calculus on curved spaces</div>
+              <div class="topics">
+                <span class="topic-pill">Riemannian Geometry</span>
+                <span class="topic-pill">Symplectic Geometry</span>
+                <span class="topic-pill">Geometric Analysis</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algebraic Geometry</div>
+              <div class="sub-desc">Geometry defined by polynomial equations</div>
+              <div class="topics">
+                <span class="topic-pill">Scheme Theory</span>
+                <span class="topic-pill">Étale Cohomology</span>
+                <span class="topic-pill">Moduli Spaces</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Geometric Topology</div>
+              <div class="sub-desc">Manifolds in low dimensions</div>
+              <div class="topics">
+                <span class="topic-pill">3-Manifolds</span>
+                <span class="topic-pill">Knot Theory</span>
+                <span class="topic-pill">4-Manifold Invariants</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">E</span> Number Theory <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Elementary Number Theory</div>
+              <div class="sub-desc">Divisibility, primes, congruences</div>
+              <div class="topics">
+                <span class="topic-pill">Prime Numbers</span>
+                <span class="topic-pill">Modular Arithmetic</span>
+                <span class="topic-pill">Quadratic Reciprocity</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Analytic Number Theory</div>
+              <div class="sub-desc">Complex analysis applied to integer problems</div>
+              <div class="topics">
+                <span class="topic-pill">Prime Number Theorem</span>
+                <span class="topic-pill">Riemann ζ-Function</span>
+                <span class="topic-pill">Riemann Hypothesis</span>
+                <span class="topic-pill">Sieve Methods</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algebraic Number Theory</div>
+              <div class="sub-desc">Number fields and their ring of integers</div>
+              <div class="topics">
+                <span class="topic-pill">Ideal Theory</span>
+                <span class="topic-pill">Class Field Theory</span>
+                <span class="topic-pill">p-adic Numbers</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Arithmetic Geometry</div>
+              <div class="sub-desc">Number theory via algebraic geometry</div>
+              <div class="topics">
+                <span class="topic-pill">Elliptic Curves</span>
+                <span class="topic-pill">Modular Forms</span>
+                <span class="topic-pill">Langlands Program</span>
+                <span class="topic-pill">Perfectoid Spaces</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div><!-- /branch-body -->
+    </div><!-- /pure -->
+
+
+    <!-- ══ APPLIED MATHEMATICS ════════════════ -->
+    <div class="branch-card applied">
+      <div class="branch-header">
+        <div class="branch-name">Applied Mathematics</div>
+        <div class="branch-desc">Mathematics shaped by external problems in science, engineering, and society</div>
+      </div>
+      <div class="branch-body">
+
+        <details>
+          <summary><span class="sum-num">A</span> Mathematical Physics <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Classical Mechanics</div>
+              <div class="sub-desc">Lagrangian, Hamiltonian, symplectic formalism</div>
+              <div class="topics">
+                <span class="topic-pill">Lagrangian Mechanics</span>
+                <span class="topic-pill">Hamiltonian Mechanics</span>
+                <span class="topic-pill">Celestial Mechanics</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Quantum Theory</div>
+              <div class="sub-desc">Rigorous mathematical foundation of QM</div>
+              <div class="topics">
+                <span class="topic-pill">Hilbert Space Formalism</span>
+                <span class="topic-pill">Quantum Field Theory</span>
+                <span class="topic-pill">Topological QFT</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">General Relativity</div>
+              <div class="sub-desc">Geometry of spacetime</div>
+              <div class="topics">
+                <span class="topic-pill">Lorentzian Geometry</span>
+                <span class="topic-pill">Einstein Field Equations</span>
+                <span class="topic-pill">Singularity Theorems</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Statistical Mechanics</div>
+              <div class="sub-desc">Many-particle systems and phase transitions</div>
+              <div class="topics">
+                <span class="topic-pill">Partition Functions</span>
+                <span class="topic-pill">Phase Transitions</span>
+                <span class="topic-pill">Renormalization Group</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Fluid Mechanics</div>
+              <div class="sub-desc">Mathematical study of fluid flow</div>
+              <div class="topics">
+                <span class="topic-pill">Euler Equations</span>
+                <span class="topic-pill">Navier-Stokes</span>
+                <span class="topic-pill">Turbulence Theory</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">B</span> Probability &amp; Statistics <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Probability Theory</div>
+              <div class="sub-desc">Measure-theoretic foundation of randomness</div>
+              <div class="topics">
+                <span class="topic-pill">Kolmogorov Axioms</span>
+                <span class="topic-pill">Law of Large Numbers</span>
+                <span class="topic-pill">Central Limit Theorem</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Stochastic Processes</div>
+              <div class="sub-desc">Probability evolving in time</div>
+              <div class="topics">
+                <span class="topic-pill">Markov Chains</span>
+                <span class="topic-pill">Brownian Motion</span>
+                <span class="topic-pill">SDEs &amp; Itô Calculus</span>
+                <span class="topic-pill">Martingales</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Mathematical Statistics</div>
+              <div class="sub-desc">Inference and estimation theory</div>
+              <div class="topics">
+                <span class="topic-pill">MLE &amp; Estimation</span>
+                <span class="topic-pill">Hypothesis Testing</span>
+                <span class="topic-pill">Bayesian Statistics</span>
+                <span class="topic-pill">Asymptotic Statistics</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">C</span> Numerical Analysis <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Numerical Linear Algebra</div>
+              <div class="sub-desc">Solving large linear systems efficiently</div>
+              <div class="topics">
+                <span class="topic-pill">LU / QR / Cholesky</span>
+                <span class="topic-pill">Krylov Methods</span>
+                <span class="topic-pill">Eigenvalue Algorithms</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Numerical Methods for DEs</div>
+              <div class="sub-desc">Approximating solutions to differential equations</div>
+              <div class="topics">
+                <span class="topic-pill">Finite Differences</span>
+                <span class="topic-pill">Finite Element Methods</span>
+                <span class="topic-pill">Spectral Methods</span>
+                <span class="topic-pill">Runge-Kutta</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Approximation Theory</div>
+              <div class="sub-desc">Best polynomial and rational approximations</div>
+              <div class="topics">
+                <span class="topic-pill">Chebyshev Approximation</span>
+                <span class="topic-pill">Splines</span>
+                <span class="topic-pill">Gaussian Quadrature</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">D</span> Optimization &amp; Control <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Calculus of Variations</div>
+              <div class="sub-desc">Optimizing functionals — Euler-Lagrange theory</div>
+              <div class="topics">
+                <span class="topic-pill">Geodesics</span>
+                <span class="topic-pill">Minimal Surfaces</span>
+                <span class="topic-pill">Direct Methods</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Convex &amp; Linear Optimization</div>
+              <div class="sub-desc">Tractable optimization via convexity</div>
+              <div class="topics">
+                <span class="topic-pill">Linear Programming</span>
+                <span class="topic-pill">Semidefinite Programming</span>
+                <span class="topic-pill">Duality Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Optimal Control Theory</div>
+              <div class="sub-desc">Optimizing dynamical systems over time</div>
+              <div class="topics">
+                <span class="topic-pill">Pontryagin Maximum Principle</span>
+                <span class="topic-pill">Dynamic Programming</span>
+                <span class="topic-pill">LQR &amp; Riccati Equation</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">E</span> Information Theory &amp; Control <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Information Theory</div>
+              <div class="sub-desc">Mathematical foundation of communication (Shannon 1948)</div>
+              <div class="topics">
+                <span class="topic-pill">Shannon Entropy</span>
+                <span class="topic-pill">Channel Capacity</span>
+                <span class="topic-pill">Data Compression</span>
+                <span class="topic-pill">Rate-Distortion</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Control Theory</div>
+              <div class="sub-desc">Forcing dynamical systems toward desired behavior</div>
+              <div class="topics">
+                <span class="topic-pill">PID Controllers</span>
+                <span class="topic-pill">State Space Methods</span>
+                <span class="topic-pill">H∞ Robust Control</span>
+                <span class="topic-pill">Kalman Filter</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">F</span> Mathematical Modelling <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Mathematical Biology</div>
+              <div class="sub-desc">Dynamical systems and PDEs in biological systems</div>
+              <div class="topics">
+                <span class="topic-pill">Population Dynamics</span>
+                <span class="topic-pill">Epidemiology (SIR)</span>
+                <span class="topic-pill">Mathematical Neuroscience</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Mathematical Finance</div>
+              <div class="sub-desc">Stochastic models in economics and markets</div>
+              <div class="topics">
+                <span class="topic-pill">Black-Scholes PDE</span>
+                <span class="topic-pill">Portfolio Optimization</span>
+                <span class="topic-pill">Game Theory</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div><!-- /branch-body -->
+    </div><!-- /applied -->
+
+
+    <!-- ══ DISCRETE MATHEMATICS ═══════════════ -->
+    <div class="branch-card discrete">
+      <div class="branch-header">
+        <div class="branch-name">Discrete Mathematics</div>
+        <div class="branch-desc">Finite and countable structures — the mathematical foundation of computing</div>
+      </div>
+      <div class="branch-body">
+
+        <details>
+          <summary><span class="sum-num">A</span> Combinatorics <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Enumerative Combinatorics</div>
+              <div class="sub-desc">Exact counting of discrete structures</div>
+              <div class="topics">
+                <span class="topic-pill">Permutations &amp; Combinations</span>
+                <span class="topic-pill">Generating Functions</span>
+                <span class="topic-pill">Partition Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Extremal Combinatorics</div>
+              <div class="sub-desc">How large or small can a structure be?</div>
+              <div class="topics">
+                <span class="topic-pill">Turán-Type Problems</span>
+                <span class="topic-pill">Ramsey Theory</span>
+                <span class="topic-pill">VC Dimension</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algebraic Combinatorics</div>
+              <div class="sub-desc">Algebra and combinatorics interacting</div>
+              <div class="topics">
+                <span class="topic-pill">Symmetric Functions</span>
+                <span class="topic-pill">Young Tableaux</span>
+                <span class="topic-pill">Expander Graphs</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Probabilistic Combinatorics</div>
+              <div class="sub-desc">Random structures and probabilistic proofs (Erdős)</div>
+              <div class="topics">
+                <span class="topic-pill">Probabilistic Method</span>
+                <span class="topic-pill">Random Graphs G(n,p)</span>
+                <span class="topic-pill">Lovász Local Lemma</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">B</span> Graph Theory <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Structural Graph Theory</div>
+              <div class="sub-desc">Qualitative properties of graphs</div>
+              <div class="topics">
+                <span class="topic-pill">Graph Coloring</span>
+                <span class="topic-pill">Planarity</span>
+                <span class="topic-pill">Graph Minors (Robertson-Seymour)</span>
+                <span class="topic-pill">Matching Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algebraic Graph Theory</div>
+              <div class="sub-desc">Graphs via linear algebra and algebra</div>
+              <div class="topics">
+                <span class="topic-pill">Spectral Graph Theory</span>
+                <span class="topic-pill">Expanders</span>
+                <span class="topic-pill">Cayley Graphs</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Topological Graph Theory</div>
+              <div class="sub-desc">Graphs embedded in surfaces</div>
+              <div class="topics">
+                <span class="topic-pill">Graph Genus</span>
+                <span class="topic-pill">Map Coloring on Surfaces</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">C</span> Theoretical Computer Science <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Automata &amp; Formal Languages</div>
+              <div class="sub-desc">Mathematical models of computation</div>
+              <div class="topics">
+                <span class="topic-pill">Finite Automata</span>
+                <span class="topic-pill">Context-Free Grammars</span>
+                <span class="topic-pill">Turing Machines</span>
+                <span class="topic-pill">Chomsky Hierarchy</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Computational Complexity</div>
+              <div class="sub-desc">Classification by resource requirements</div>
+              <div class="topics">
+                <span class="topic-pill">P vs NP</span>
+                <span class="topic-pill">NP-Completeness</span>
+                <span class="topic-pill">PSPACE / #P</span>
+                <span class="topic-pill">PCP Theorem</span>
+                <span class="topic-pill">Circuit Complexity</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Algorithm Design &amp; Analysis</div>
+              <div class="sub-desc">Efficient methods to solve computational problems</div>
+              <div class="topics">
+                <span class="topic-pill">Graph Algorithms</span>
+                <span class="topic-pill">Dynamic Programming</span>
+                <span class="topic-pill">Randomized Algorithms</span>
+                <span class="topic-pill">Approximation Algorithms</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">D</span> Cryptography &amp; Coding Theory <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Cryptography</div>
+              <div class="sub-desc">Mathematical security of communication</div>
+              <div class="topics">
+                <span class="topic-pill">Public-Key (RSA, ECDH)</span>
+                <span class="topic-pill">Zero-Knowledge Proofs</span>
+                <span class="topic-pill">Multi-Party Computation</span>
+                <span class="topic-pill">Post-Quantum (LWE)</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Coding Theory</div>
+              <div class="sub-desc">Error detection and correction</div>
+              <div class="topics">
+                <span class="topic-pill">Linear Codes</span>
+                <span class="topic-pill">Reed-Solomon</span>
+                <span class="topic-pill">LDPC &amp; Turbo Codes</span>
+                <span class="topic-pill">List Decoding</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><span class="sum-num">E</span> Logic in Computer Science <span class="sum-arrow">▶</span></summary>
+          <div class="sub-list">
+            <div class="sub-item">
+              <div class="sub-name">Type Theory</div>
+              <div class="sub-desc">Types as propositions — Curry-Howard correspondence</div>
+              <div class="topics">
+                <span class="topic-pill">λ-Calculus</span>
+                <span class="topic-pill">Dependent Types (Coq, Lean)</span>
+                <span class="topic-pill">Homotopy Type Theory</span>
+              </div>
+            </div>
+            <div class="sub-item">
+              <div class="sub-name">Formal Verification</div>
+              <div class="sub-desc">Proving correctness of systems</div>
+              <div class="topics">
+                <span class="topic-pill">Temporal Logic (LTL, CTL)</span>
+                <span class="topic-pill">Model Checking</span>
+                <span class="topic-pill">Separation Logic</span>
+                <span class="topic-pill">Theorem Provers</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div><!-- /branch-body -->
+    </div><!-- /discrete -->
+
+  </div><!-- /branches-wrap -->
+
+</div><!-- /page-wrap -->
+</body>
+</html>

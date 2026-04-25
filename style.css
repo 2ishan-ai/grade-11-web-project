@@ -1,0 +1,186 @@
+body {
+    margin: 0;
+    font-family: Georgia, serif;
+    background: black;
+    color: white;
+}
+
+/* NAVBAR */
+/* NAVBAR (consistent across all pages) */
+.navbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.nav-container {
+    text-align: center;
+    padding: 15px;
+}
+
+/* LINKS */
+.navbar a {
+    color: white;
+    margin: 0 20px;
+    text-decoration: none;
+    position: relative;
+    font-size: 18px;
+}
+
+/* UNDERLINE ANIMATION */
+.navbar a::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background: white;
+    left: 0;
+    bottom: -5px;
+    transition: 0.3s;
+}
+
+.navbar a:hover::after {
+    width: 100%;
+}
+
+/* HERO */
+.hero {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TITLE */
+.title {
+    position: absolute;
+    font-size: 60px;
+    z-index: 2;
+    letter-spacing: 2px;
+
+    animation: fadeIn 2s ease;
+}
+
+/* QUOTES */
+.quote {
+    position: absolute;
+    font-size: 18px;
+    opacity: 0.6;
+    max-width: 250px;
+
+    transition: 0.3s;
+}
+
+/* hover focus */
+.quote:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* FLOAT ANIMATIONS (different speeds) */
+.q1 {
+    top: 20%;
+    left: 10%;
+    animation: float1 12s infinite alternate ease-in-out;
+}
+
+.q2 {
+    top: 60%;
+    left: 20%;
+    animation: float2 15s infinite alternate ease-in-out;
+}
+
+.q3 {
+    top: 30%;
+    right: 15%;
+    animation: float3 14s infinite alternate ease-in-out;
+}
+
+.q4 {
+    bottom: 20%;
+    right: 10%;
+    animation: float1 13s infinite alternate ease-in-out;
+}
+
+.q5 {
+    top: 50%;
+    right: 30%;
+    animation: float2 16s infinite alternate ease-in-out;
+}
+
+/* FLOAT KEYFRAMES */
+@keyframes float1 {
+    from { transform: translateY(0); }
+    to { transform: translateY(-40px); }
+}
+
+@keyframes float2 {
+    from { transform: translateX(0); }
+    to { transform: translateX(40px); }
+}
+
+@keyframes float3 {
+    from { transform: translate(0,0); }
+    to { transform: translate(-30px, 30px); }
+}
+
+/* TITLE FADE */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* NEXT SECTION */
+.after {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+}
+
+.symbols {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.symbols span {
+    position: absolute;
+    color: rgba(255,255,255,0.08);
+    font-size: 40px;
+
+    animation: floatSymbols 20s linear infinite;
+}
+
+/* RANDOM POSITIONS */
+.symbols span:nth-child(1) { left: 10%; animation-duration: 18s; }
+.symbols span:nth-child(2) { left: 20%; animation-duration: 22s; }
+.symbols span:nth-child(3) { left: 30%; animation-duration: 20s; }
+.symbols span:nth-child(4) { left: 40%; animation-duration: 25s; }
+.symbols span:nth-child(5) { left: 50%; animation-duration: 19s; }
+.symbols span:nth-child(6) { left: 60%; animation-duration: 23s; }
+.symbols span:nth-child(7) { left: 70%; animation-duration: 21s; }
+.symbols span:nth-child(8) { left: 80%; animation-duration: 26s; }
+.symbols span:nth-child(9) { left: 90%; animation-duration: 24s; }
+.symbols span:nth-child(10){ left: 15%; animation-duration: 28s; }
+
+/* FLOAT UPWARD */
+@keyframes floatSymbols {
+    from {
+        top: 100%;
+        transform: translateY(0);
+    }
+    to {
+        top: -10%;
+        transform: translateY(-100vh);
+    }
+}
